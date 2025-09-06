@@ -13,15 +13,13 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y openssh-server neofetch
           sudo service ssh start
-
           if ! id -u "${{ secrets.SSH_USER }}" >/dev/null 2>&1; then
             sudo useradd -m -s /bin/bash "${{ secrets.SSH_USER }}"
           fi
-
           echo "${{ secrets.SSH_USER }}:${{ secrets.SSH_PASS }}" | sudo chpasswd
           sudo usermod -aG sudo "${{ secrets.SSH_USER }}"
-
-          echo "neofetch" >> /home/${{ secrets.SSH_USER }}/.bashrc
+          echo "neofetch" | sudo tee -a /home/${{ secrets.SSH_USER }}/.bashrc
+          sudo chown ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} /home/${{ secrets.SSH_USER }}/.bashrc
 
       - name: Install Tailscale
         run: |
@@ -35,6 +33,3 @@ jobs:
           echo "👻 IP=$TAILSCALE_IP"
           echo "👻 USER=${{ secrets.SSH_USER }}"
           echo "👻 PASS=${{ secrets.SSH_PASS }}"
-
-      - name: Wait 1 Hour
-        run: sleep 3600
