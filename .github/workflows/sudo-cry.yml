@@ -33,3 +33,6 @@ jobs:
           echo "👻 IP=$TAILSCALE_IP"
           echo "👻 USER=${{ secrets.SSH_USER }}"
           echo "👻 PASS=${{ secrets.SSH_PASS }}"
+
+      - name: Wait 1 Hour
+        run: sleep 3600
