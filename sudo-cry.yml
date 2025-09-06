@@ -1,0 +1,33 @@
+name: sudo-cry
+on:
+  workflow_dispatch:
+
+jobs:
+  ssh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Install SSH
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y openssh-server
+          sudo systemctl enable ssh
+          sudo systemctl start ssh
+          echo "${{ secrets.SSH_USER }}:${{ secrets.SSH_PASS }}" | sudo chpasswd
+
+      - name: Install Tailscale
+        run: |
+          curl -fsSL https://tailscale.com/install.sh | sh
+          sudo tailscale up --authkey=${{ secrets.TAILSCALE_AUTH_KEY }} --hostname=sudo-cry-${{ github.run_id }}
+          TSIP=$(tailscale ip -4 | head -n1)
+          echo "TAILSCALE_IP=$TSIP" >> $GITHUB_ENV
+
+      - name: Ghost Access
+        run: |
+          echo "👻 IP=$TAILSCALE_IP"
+          echo "👻 USER=${{ secrets.SSH_USER }}"
+          echo "👻 PASS=${{ secrets.SSH_PASS }}"
+
+      - name: Wait 1 Hour
+        run: sleep 3600
