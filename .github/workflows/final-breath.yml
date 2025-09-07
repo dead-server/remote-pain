@@ -5,7 +5,7 @@ on:
 jobs:
   rdp:
     runs-on: windows-latest
-    timeout-minutes: 60
+    timeout-minutes: 360
 
     steps:
       - name: Enable RDP
@@ -37,5 +37,5 @@ jobs:
           Write-Host "💀 USER=${{ secrets.RDP_USER }}"
           Write-Host "💀 PASS=${{ secrets.RDP_PASS }}"
 
-      - name: Wait 1 Hour
-        run: Start-Sleep -Seconds 3600
+      - name: Wait 6 Hours
+        run: Start-Sleep -Seconds 21600
